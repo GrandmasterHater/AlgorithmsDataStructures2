@@ -47,7 +47,7 @@ namespace AlgorithmsDataStructures2
         public BST(BSTNode<T> node)
         {
             Root = node;
-            _count = 0;
+            _count = Root is null ? 0 : 1;
         }
 	
         // Exercise 2, time complexity O(log n) - fully binary tree, O(n) - one side tree, space complexity O(h) where h - tree height

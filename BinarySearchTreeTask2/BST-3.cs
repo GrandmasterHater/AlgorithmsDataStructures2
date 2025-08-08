@@ -7,6 +7,29 @@ namespace AlgorithmsDataStructures2
     [TestFixture]
     public class BST_3
     {
+        #region Cpnstructor
+        
+        [Test]
+        public void Constructor_WhenTreeEmpty_RootIsNullAndCountZero()
+        {
+            BST<int> bst = new BST<int>(null);
+            
+            Assert.That(bst.RootNode, Is.Null);
+            Assert.That(bst.Count(), Is.EqualTo(0));
+        }
+        
+        [Test]
+        public void Constructor_WhenTreeWithRoot_RootIsNotNullAndCountOne()
+        {
+            BSTNode<int> root = new BSTNode<int>(1, 1, null);
+            BST<int> bst = new BST<int>(root);
+            
+            Assert.That(bst.RootNode, Is.Not.Null.And.EqualTo(root));
+            Assert.That(bst.Count(), Is.EqualTo(1));
+        }
+        
+        #endregion
+        
         #region FindNodeByKey
 
         [Test]

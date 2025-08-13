@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AlgorithmsDataStructures2
 {
-    public abstract class BSTNode
+    public class BSTNode
     {
-        public abstract int KeyOfNode { get; set; }
-        public abstract BSTNode ParentNode { get; set; }
-        public abstract BSTNode LeftChildNode { get; set; }
-        public abstract BSTNode RightChildNode { get; set; }
-            
-        public bool IsLeaf => LeftChildNode == null && RightChildNode == null;
+        public int NodeKey;
+        public BSTNode Parent; // родитель или null для корня
+        public BSTNode LeftChild; // левый потомок
+        public BSTNode RightChild; // правый потомок	
     }
     
-    public class BSTNode<T> : BSTNode
+    public class BSTNode<T>
     {
         public int NodeKey; // ключ узла
         public T NodeValue; // значение в узле
         public BSTNode<T> Parent; // родитель или null для корня
         public BSTNode<T> LeftChild; // левый потомок
         public BSTNode<T> RightChild; // правый потомок	
+        
+        public bool IsLeaf => LeftChild == null && RightChild == null;
 	
         public BSTNode(int key, T val, BSTNode<T> parent)
         {
@@ -28,28 +29,6 @@ namespace AlgorithmsDataStructures2
             Parent = parent;
             LeftChild = null;
             RightChild = null;
-        }
-
-        public override int KeyOfNode
-        {
-            get => NodeKey;
-            set => NodeKey = value; 
-        }
-        
-        public override BSTNode ParentNode
-        {
-            get => Parent;
-            set => Parent = (BSTNode<T>)value; 
-        }
-        public override BSTNode LeftChildNode
-        {
-            get => LeftChild;
-            set => LeftChild = (BSTNode<T>)value; 
-        }
-        public override BSTNode RightChildNode
-        {
-            get => RightChild;
-            set => RightChild = (BSTNode<T>)value; 
         }
     }
 
@@ -117,7 +96,7 @@ namespace AlgorithmsDataStructures2
             if (FromNode == null)
                 throw new ArgumentNullException();
             
-            return (BSTNode<T>)FinMinMaxRecursive(FromNode, FindMax);
+            return FinMinMaxRecursive(FromNode, FindMax);
         }
 	
         // Exercise 2, time complexity O(h), space complexity O(h) where h - tree height
@@ -160,12 +139,12 @@ namespace AlgorithmsDataStructures2
         // Exercise 3, time complexity O(n), space complexity O(n)
         public List<BSTNode> WideAllNodes()
         {
-            List<BSTNode> nodes = new List<BSTNode>();
-            
             if (Root == null)
-                return nodes;
-            
-            nodes.Add(Root);
+                return new List<BSTNode>();
+
+            BSTNode abstractRoot = ConvertToBSTNodeTreeRecursive(Root, null);;
+            List<BSTNode> nodes = new List<BSTNode>();
+            nodes.Add(abstractRoot);
             
             return WideAllNodesRecursive(nodes, 1);
         }
@@ -173,26 +152,26 @@ namespace AlgorithmsDataStructures2
         // Exercise 3, time complexity O(n), space complexity O(n)
         public List<BSTNode> DeepAllNodes(int order)
         {
-            List<BSTNode> nodes = new List<BSTNode>();
-            
             if (Root == null)
-                return nodes;
+                return new List<BSTNode>();
+            
+            BSTNode abstractRoot = ConvertToBSTNodeTreeRecursive(Root, null);
+            List<BSTNode> nodes = new List<BSTNode>();
             
             switch (order)
             {
                 case 0:
-                    return InOrderDeepAllNodesRecursive(Root, nodes);
+                    return InOrderDeepAllNodesRecursive(abstractRoot, nodes);
                 case 1:
-                    return PostOrderDeepAllNodesRecursive(Root, nodes);
+                    return PostOrderDeepAllNodesRecursive(abstractRoot, nodes);
                 case 2:
-                    return PreOrderDeepAllNodesRecursive(Root, nodes);
-                
+                    return PreOrderDeepAllNodesRecursive(abstractRoot, nodes);
                 default:
                     throw new ArgumentException("Invalid order of traversal");
             }
         }
 
-        private List<BSTNode> InOrderDeepAllNodesRecursive(BSTNode<T> node, List<BSTNode> nodes)
+        private List<BSTNode> InOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
         {
             if (node.LeftChild != null)
                 InOrderDeepAllNodesRecursive(node.LeftChild, nodes);
@@ -205,7 +184,7 @@ namespace AlgorithmsDataStructures2
             return nodes;
         }
         
-        private List<BSTNode> PostOrderDeepAllNodesRecursive(BSTNode<T> node, List<BSTNode> nodes)
+        private List<BSTNode> PostOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
         {
             if (node.LeftChild != null)
                 PostOrderDeepAllNodesRecursive(node.LeftChild, nodes);
@@ -218,7 +197,7 @@ namespace AlgorithmsDataStructures2
             return nodes;
         }
         
-        private List<BSTNode> PreOrderDeepAllNodesRecursive(BSTNode<T> node, List<BSTNode> nodes)
+        private List<BSTNode> PreOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
         {
             nodes.Add(node);
             
@@ -240,15 +219,15 @@ namespace AlgorithmsDataStructures2
             {
                 BSTNode node = nodes[index];
 
-                if (node.LeftChildNode != null)
+                if (node.LeftChild != null)
                 {
-                    nodes.Add(node.LeftChildNode);
+                    nodes.Add(node.LeftChild);
                     ++addedNodesCount;
                 }
 
-                if (node.RightChildNode != null)
+                if (node.RightChild != null)
                 {
-                    nodes.Add(node.RightChildNode);
+                    nodes.Add(node.RightChild);
                     ++addedNodesCount;
                 }
             }
@@ -268,7 +247,7 @@ namespace AlgorithmsDataStructures2
             BSTNode<T> nextNode = isLeft ? node.LeftChild : node.RightChild;
 
             if (nextNode == null)
-                return new BSTFind<T> { Node = (BSTNode<T>)node, NodeHasKey = false, ToLeft = isLeft };
+                return new BSTFind<T> { Node = node, NodeHasKey = false, ToLeft = isLeft };
                 
             return FindNodeByKeyRecursive(nextNode, key);
         }
@@ -347,6 +326,23 @@ namespace AlgorithmsDataStructures2
             deletingNode.Parent = null;
 
             return true;
+        }
+        
+        private BSTNode ConvertToBSTNodeTreeRecursive(BSTNode<T> node, BSTNode parent)
+        {
+            if (node == null)
+                return null;
+            
+            BSTNode abstractNode = new BSTNode()
+            {
+                NodeKey = node.NodeKey,
+                Parent = parent
+            };
+
+            abstractNode.LeftChild = ConvertToBSTNodeTreeRecursive(node.LeftChild, abstractNode);
+            abstractNode.RightChild = ConvertToBSTNodeTreeRecursive(node.RightChild, abstractNode);
+
+            return abstractNode;
         }
     }
 }

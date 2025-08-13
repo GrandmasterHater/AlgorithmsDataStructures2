@@ -377,7 +377,7 @@ namespace AlgorithmsDataStructures2
             
             List<int> expectedKeysOrder = new List<int>() { 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15 };
             
-            Assert.That(bst.WideAllNodes().Select(node => node.KeyOfNode).ToList(), Is.EqualTo(expectedKeysOrder));
+            Assert.That(bst.WideAllNodes().Select(node => node.NodeKey).ToList(), Is.EqualTo(expectedKeysOrder));
         }
 
         #endregion
@@ -391,7 +391,7 @@ namespace AlgorithmsDataStructures2
         {
             BST<int> bst = CreateTree(out List<BSTNode<int>> nodes);
             
-            Assert.That(bst.DeepAllNodes(order).Select(node => node.KeyOfNode).ToArray(), Is.EqualTo(expectedKeysOrder));
+            Assert.That(bst.DeepAllNodes(order).Select(node => node.NodeKey).ToArray(), Is.EqualTo(expectedKeysOrder));
         }
         
         #endregion
@@ -407,7 +407,7 @@ namespace AlgorithmsDataStructures2
             
             List<int> expectedKeysOrder = new List<int>() { 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
             
-            Assert.That(bst.DeepAllNodes(0).Select(node => node.KeyOfNode).ToList(), Is.EqualTo(expectedKeysOrder));
+            Assert.That(bst.DeepAllNodes(0).Select(node => node.NodeKey).ToList(), Is.EqualTo(expectedKeysOrder));
         }
 
         #endregion
@@ -458,7 +458,7 @@ namespace AlgorithmsDataStructures2
         {
             BST<int> restoredTree = TTO_2.RestoreTree<int>(preOrderNodes.ToList(), inOrderNodes.ToList());
             
-            Assert.That(restoredTree.WideAllNodes().Select(node => node.KeyOfNode).ToList(), Is.EqualTo(expectedNodes));
+            Assert.That(restoredTree.WideAllNodes().Select(node => node.NodeKey).ToList(), Is.EqualTo(expectedNodes));
         }
 
         #endregion

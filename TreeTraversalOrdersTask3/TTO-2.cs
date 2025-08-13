@@ -40,11 +40,11 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             {
                 BSTNode node = nodesForInversion.Dequeue();
                 
-                if(node.LeftChild != null)
-                    nodesForInversion.Enqueue(node.LeftChild);
+                if(node.LeftChildNode != null)
+                    nodesForInversion.Enqueue(node.LeftChildNode);
                 
-                if(node.RightChild != null)
-                    nodesForInversion.Enqueue(node.RightChild);
+                if(node.RightChildNode != null)
+                    nodesForInversion.Enqueue(node.RightChildNode);
 
                 InvertNode(node);
             }
@@ -63,15 +63,15 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             
             InvertNode(node);
 
-            InvertTreeWthDFSRecursive(node.LeftChild);
-            InvertTreeWthDFSRecursive(node.RightChild);
+            InvertTreeWthDFSRecursive(node.LeftChildNode);
+            InvertTreeWthDFSRecursive(node.RightChildNode);
         }
 
         private static void InvertNode(BSTNode node)
         {
-            BSTNode leftNode = node.LeftChild;
-            node.LeftChild = node.RightChild;
-            node.RightChild = leftNode;
+            BSTNode leftNode = node.LeftChildNode;
+            node.LeftChildNode = node.RightChildNode;
+            node.RightChildNode = leftNode;
         }
 
         #endregion

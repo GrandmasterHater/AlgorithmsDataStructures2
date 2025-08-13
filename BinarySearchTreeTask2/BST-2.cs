@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace AlgorithmsDataStructures2
+namespace AlgorithmsDataStructures2.Task2
 {
     public class TreePath<T> : List<BSTNode<T>>
     {

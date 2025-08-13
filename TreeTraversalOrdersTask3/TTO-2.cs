@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
+namespace AlgorithmsDataStructures2
 {
     public static class TTO_2
     {

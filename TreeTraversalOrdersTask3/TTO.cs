@@ -5,22 +5,17 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
 {
     public abstract class BSTNode
     {
-        public abstract int KeyOfNode { get; set; } 
+        public int NodeKey;
+        public BSTNode Parent; 
+        public BSTNode LeftChild; 
+        public BSTNode RightChild;	
         
-        public abstract BSTNode ParentNode { get; set; } 
-        public abstract BSTNode LeftChildNode { get; set; }  
-        public abstract BSTNode RightChildNode { get; set; } 	
-        
-        public bool IsLeaf => LeftChildNode == null && RightChildNode == null;
+        public bool IsLeaf => LeftChild == null && RightChild == null;
     }
     
     public class BSTNode<T> : BSTNode
     {
-        public int NodeKey; // ключ узла
         public T NodeValue; // значение в узле
-        public BSTNode<T> Parent; // родитель или null для корня
-        public BSTNode<T> LeftChild; // левый потомок
-        public BSTNode<T> RightChild; // правый потомок	
 	
         public BSTNode(int key, T val, BSTNode<T> parent)
         {
@@ -29,29 +24,6 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             Parent = parent;
             LeftChild = null;
             RightChild = null;
-        }
-
-        public override int KeyOfNode
-        {
-            get => NodeKey; 
-            set => NodeKey = value;
-        }
-        public override BSTNode ParentNode 
-        {
-            get => Parent; 
-            set => Parent = (BSTNode<T>)value;
-        }
-        
-        public override BSTNode LeftChildNode 
-        {
-            get => LeftChild; 
-            set => LeftChild = (BSTNode<T>)value;
-        }
-        
-        public override BSTNode RightChildNode 
-        {
-            get => RightChild; 
-            set => RightChild = (BSTNode<T>)value;
         }
     }
 
@@ -196,24 +168,24 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
 
         private List<BSTNode> InOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
         {
-            if (node.LeftChildNode != null)
-                InOrderDeepAllNodesRecursive(node.LeftChildNode, nodes);
+            if (node.LeftChild != null)
+                InOrderDeepAllNodesRecursive(node.LeftChild, nodes);
             
             nodes.Add(node);
 
-            if (node.RightChildNode != null)
-                InOrderDeepAllNodesRecursive(node.RightChildNode, nodes);
+            if (node.RightChild != null)
+                InOrderDeepAllNodesRecursive(node.RightChild, nodes);
             
             return nodes;
         }
         
         private List<BSTNode> PostOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
         {
-            if (node.LeftChildNode != null)
-                PostOrderDeepAllNodesRecursive(node.LeftChildNode, nodes);
+            if (node.LeftChild != null)
+                PostOrderDeepAllNodesRecursive(node.LeftChild, nodes);
 
-            if (node.RightChildNode != null)
-                PostOrderDeepAllNodesRecursive(node.RightChildNode, nodes);
+            if (node.RightChild != null)
+                PostOrderDeepAllNodesRecursive(node.RightChild, nodes);
             
             nodes.Add(node);
             
@@ -224,11 +196,11 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
         {
             nodes.Add(node);
             
-            if (node.LeftChildNode != null)
-                PreOrderDeepAllNodesRecursive(node.LeftChildNode, nodes);
+            if (node.LeftChild != null)
+                PreOrderDeepAllNodesRecursive(node.LeftChild, nodes);
 
-            if (node.RightChildNode != null)
-                PreOrderDeepAllNodesRecursive(node.RightChildNode, nodes);
+            if (node.RightChild != null)
+                PreOrderDeepAllNodesRecursive(node.RightChild, nodes);
             
             return nodes;
         }
@@ -242,15 +214,15 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             {
                 BSTNode node = nodes[index];
 
-                if (node.LeftChildNode != null)
+                if (node.LeftChild != null)
                 {
-                    nodes.Add(node.LeftChildNode);
+                    nodes.Add(node.LeftChild);
                     ++addedNodesCount;
                 }
 
-                if (node.RightChildNode != null)
+                if (node.RightChild != null)
                 {
-                    nodes.Add(node.RightChildNode);
+                    nodes.Add(node.RightChild);
                     ++addedNodesCount;
                 }
             }
@@ -263,11 +235,11 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
 	
         private BSTFind<T> FindNodeByKeyRecursive(BSTNode node, int key)
         {
-            if (node.KeyOfNode == key)
+            if (node.NodeKey == key)
                 return new BSTFind<T> { Node = (BSTNode<T>)node, NodeHasKey = true };
 
-            bool isLeft = node.KeyOfNode > key;
-            BSTNode nextNode = isLeft ? node.LeftChildNode : node.RightChildNode;
+            bool isLeft = node.NodeKey > key;
+            BSTNode nextNode = isLeft ? node.LeftChild : node.RightChild;
 
             if (nextNode == null)
                 return new BSTFind<T> { Node = (BSTNode<T>)node, NodeHasKey = false, ToLeft = isLeft };
@@ -277,7 +249,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
         
         private BSTNode FinMinMaxRecursive(BSTNode FromNode, bool FindMax)
         {
-            BSTNode nextNode = FindMax ? FromNode.RightChildNode : FromNode.LeftChildNode;
+            BSTNode nextNode = FindMax ? FromNode.RightChild : FromNode.LeftChild;
             
             if (nextNode == null)
                 return FromNode;
@@ -293,60 +265,60 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
 
         private bool DeleteLeafNode(BSTNode node)
         {
-            if (node.KeyOfNode < node.ParentNode.KeyOfNode)
-                node.ParentNode.LeftChildNode = null;
+            if (node.NodeKey < node.Parent.NodeKey)
+                node.Parent.LeftChild = null;
             else
-                node.ParentNode.RightChildNode = null;
+                node.Parent.RightChild = null;
 
-            node.ParentNode = null;
+            node.Parent = null;
 
             return true;
         }
 
         private bool ReplaceByLeftChild(BSTNode node)
         {
-            node.LeftChildNode.ParentNode = node.ParentNode;
-            node.ParentNode.LeftChildNode = node.LeftChildNode;
-            node.ParentNode = null;
+            node.LeftChild.Parent = node.Parent;
+            node.Parent.LeftChild = node.LeftChild;
+            node.Parent = null;
             return true;
         }
         
         private void Replace(BSTNode fromNode, BSTNode toNode)
         {
-            toNode.LeftChildNode = fromNode.LeftChildNode;
-            fromNode.LeftChildNode.ParentNode = toNode;
+            toNode.LeftChild = fromNode.LeftChild;
+            fromNode.LeftChild.Parent = toNode;
             
-            toNode.RightChildNode = fromNode.RightChildNode;
-            fromNode.RightChildNode.ParentNode = toNode;
+            toNode.RightChild = fromNode.RightChild;
+            fromNode.RightChild.Parent = toNode;
             
-            toNode.ParentNode = fromNode.ParentNode;
+            toNode.Parent = fromNode.Parent;
             
-            if (fromNode.KeyOfNode < fromNode.ParentNode.KeyOfNode)
-                fromNode.ParentNode.LeftChildNode = toNode;
+            if (fromNode.NodeKey < fromNode.Parent.NodeKey)
+                fromNode.Parent.LeftChild = toNode;
             else
-                fromNode.ParentNode.RightChildNode = toNode;
+                fromNode.Parent.RightChild = toNode;
         }
 
         private bool ReplaceByLeaf(BSTNode deletingNode, BSTNode replacingLeaf)
         {
             Replace(deletingNode, replacingLeaf);
 
-            deletingNode.LeftChildNode = null;
-            deletingNode.RightChildNode = null;
-            deletingNode.ParentNode = null;
+            deletingNode.LeftChild = null;
+            deletingNode.RightChild = null;
+            deletingNode.Parent = null;
 
             return true;
         }
         
         private bool ReplaceByNode(BSTNode deletingNode, BSTNode replacingNode)
         {
-            replacingNode.RightChildNode.ParentNode = replacingNode.ParentNode;
-            replacingNode.ParentNode.LeftChildNode = replacingNode.RightChildNode;
+            replacingNode.RightChild.Parent = replacingNode.Parent;
+            replacingNode.Parent.LeftChild = replacingNode.RightChild;
             Replace(deletingNode, replacingNode);
 
-            deletingNode.LeftChildNode = null;
-            deletingNode.RightChildNode = null;
-            deletingNode.ParentNode = null;
+            deletingNode.LeftChild = null;
+            deletingNode.RightChild = null;
+            deletingNode.Parent = null;
 
             return true;
         }

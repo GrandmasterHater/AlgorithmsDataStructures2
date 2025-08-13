@@ -3,19 +3,15 @@ using System.Collections.Generic;
 
 namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
 {
-    public abstract class BSTNode
+    public class BSTNode<T>
     {
-        public int NodeKey;
-        public BSTNode Parent; 
-        public BSTNode LeftChild; 
-        public BSTNode RightChild;	
-        
-        public bool IsLeaf => LeftChild == null && RightChild == null;
-    }
-    
-    public class BSTNode<T> : BSTNode
-    {
+        public int NodeKey; // ключ узла
         public T NodeValue; // значение в узле
+        public BSTNode<T> Parent; // родитель или null для корня
+        public BSTNode<T> LeftChild; // левый потомок
+        public BSTNode<T> RightChild; // правый потомок	
+
+        public bool IsLeaf => LeftChild == null && RightChild == null;
 	
         public BSTNode(int key, T val, BSTNode<T> parent)
         {
@@ -117,7 +113,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             if (deletingNode.RightChild == null)
                 return ReplaceByLeftChild(deletingNode);
 
-            BSTNode nodeToReplace = FinMinMax((BSTNode<T>)deletingNode.RightChild, false);
+            BSTNode<T> nodeToReplace = FinMinMax(deletingNode.RightChild, false);
 
             if (nodeToReplace.IsLeaf)
                 return ReplaceByLeaf(deletingNode, nodeToReplace);
@@ -132,9 +128,9 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
         }
         
         // Exercise 3, time complexity O(n), space complexity O(n)
-        public List<BSTNode> WideAllNodes()
+        public List<BSTNode<T>> WideAllNodes()
         {
-            List<BSTNode> nodes = new List<BSTNode>();
+            List<BSTNode<T>> nodes = new List<BSTNode<T>>();
             
             if (Root == null)
                 return nodes;
@@ -145,9 +141,9 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
         }
 
         // Exercise 3, time complexity O(n), space complexity O(n)
-        public List<BSTNode> DeepAllNodes(int order)
+        public List<BSTNode<T>> DeepAllNodes(int order)
         {
-            List<BSTNode> nodes = new List<BSTNode>();
+            List<BSTNode<T>> nodes = new List<BSTNode<T>>();
             
             if (Root == null)
                 return nodes;
@@ -166,7 +162,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             }
         }
 
-        private List<BSTNode> InOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
+        private List<BSTNode<T>> InOrderDeepAllNodesRecursive(BSTNode<T> node, List<BSTNode<T>> nodes)
         {
             if (node.LeftChild != null)
                 InOrderDeepAllNodesRecursive(node.LeftChild, nodes);
@@ -179,7 +175,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return nodes;
         }
         
-        private List<BSTNode> PostOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
+        private List<BSTNode<T>> PostOrderDeepAllNodesRecursive(BSTNode<T> node, List<BSTNode<T>> nodes)
         {
             if (node.LeftChild != null)
                 PostOrderDeepAllNodesRecursive(node.LeftChild, nodes);
@@ -192,7 +188,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return nodes;
         }
         
-        private List<BSTNode> PreOrderDeepAllNodesRecursive(BSTNode node, List<BSTNode> nodes)
+        private List<BSTNode<T>> PreOrderDeepAllNodesRecursive(BSTNode<T> node, List<BSTNode<T>> nodes)
         {
             nodes.Add(node);
             
@@ -205,14 +201,14 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return nodes;
         }
 
-        private List<BSTNode> WideAllNodesRecursive(List<BSTNode> nodes, int lastLevelNodesCount)
+        private List<BSTNode<T>> WideAllNodesRecursive(List<BSTNode<T>> nodes, int lastLevelNodesCount)
         {
             int addedNodesCount = 0;
             int initialCount = nodes.Count;
             
             for (int index = nodes.Count - lastLevelNodesCount ; index < initialCount; ++index)
             {
-                BSTNode node = nodes[index];
+                BSTNode<T> node = nodes[index];
 
                 if (node.LeftChild != null)
                 {
@@ -233,13 +229,13 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return WideAllNodesRecursive(nodes, addedNodesCount);
         }
 	
-        private BSTFind<T> FindNodeByKeyRecursive(BSTNode node, int key)
+        private BSTFind<T> FindNodeByKeyRecursive(BSTNode<T> node, int key)
         {
             if (node.NodeKey == key)
-                return new BSTFind<T> { Node = (BSTNode<T>)node, NodeHasKey = true };
+                return new BSTFind<T> { Node = node, NodeHasKey = true };
 
             bool isLeft = node.NodeKey > key;
-            BSTNode nextNode = isLeft ? node.LeftChild : node.RightChild;
+            BSTNode<T> nextNode = isLeft ? node.LeftChild : node.RightChild;
 
             if (nextNode == null)
                 return new BSTFind<T> { Node = (BSTNode<T>)node, NodeHasKey = false, ToLeft = isLeft };
@@ -247,9 +243,9 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return FindNodeByKeyRecursive(nextNode, key);
         }
         
-        private BSTNode FinMinMaxRecursive(BSTNode FromNode, bool FindMax)
+        private BSTNode<T> FinMinMaxRecursive(BSTNode<T> FromNode, bool FindMax)
         {
-            BSTNode nextNode = FindMax ? FromNode.RightChild : FromNode.LeftChild;
+            BSTNode<T> nextNode = FindMax ? FromNode.RightChild : FromNode.LeftChild;
             
             if (nextNode == null)
                 return FromNode;
@@ -263,7 +259,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return true;
         }
 
-        private bool DeleteLeafNode(BSTNode node)
+        private bool DeleteLeafNode(BSTNode<T> node)
         {
             if (node.NodeKey < node.Parent.NodeKey)
                 node.Parent.LeftChild = null;
@@ -275,7 +271,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return true;
         }
 
-        private bool ReplaceByLeftChild(BSTNode node)
+        private bool ReplaceByLeftChild(BSTNode<T> node)
         {
             node.LeftChild.Parent = node.Parent;
             node.Parent.LeftChild = node.LeftChild;
@@ -283,7 +279,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return true;
         }
         
-        private void Replace(BSTNode fromNode, BSTNode toNode)
+        private void Replace(BSTNode<T> fromNode, BSTNode<T> toNode)
         {
             toNode.LeftChild = fromNode.LeftChild;
             fromNode.LeftChild.Parent = toNode;
@@ -299,7 +295,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
                 fromNode.Parent.RightChild = toNode;
         }
 
-        private bool ReplaceByLeaf(BSTNode deletingNode, BSTNode replacingLeaf)
+        private bool ReplaceByLeaf(BSTNode<T> deletingNode, BSTNode<T> replacingLeaf)
         {
             Replace(deletingNode, replacingLeaf);
 
@@ -310,7 +306,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             return true;
         }
         
-        private bool ReplaceByNode(BSTNode deletingNode, BSTNode replacingNode)
+        private bool ReplaceByNode(BSTNode<T> deletingNode, BSTNode<T> replacingNode)
         {
             replacingNode.RightChild.Parent = replacingNode.Parent;
             replacingNode.Parent.LeftChild = replacingNode.RightChild;

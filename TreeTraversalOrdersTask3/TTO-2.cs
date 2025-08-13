@@ -13,7 +13,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             if (tree.RootNode == null || tree.RootNode.IsLeaf)
                 return;
             
-            Queue<BSTNode> nodesForInversion = new Queue<BSTNode>();
+            Queue<BSTNode<int>> nodesForInversion = new Queue<BSTNode<int>>();
             nodesForInversion.Enqueue(tree.RootNode);
 
             switch (inversionType)
@@ -33,12 +33,12 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
         // Exercise 3, task 3, time complexity O(n), space complexity O(w) where w - tree width
         private static void InvertTreeWthBFS(BST<int> tree)
         {
-            Queue<BSTNode> nodesForInversion = new Queue<BSTNode>();
+            Queue<BSTNode<int>> nodesForInversion = new Queue<BSTNode<int>>();
             nodesForInversion.Enqueue(tree.RootNode);
 
             while (nodesForInversion.Count > 0)
             {
-                BSTNode node = nodesForInversion.Dequeue();
+                BSTNode<int> node = nodesForInversion.Dequeue();
                 
                 if(node.LeftChild != null)
                     nodesForInversion.Enqueue(node.LeftChild);
@@ -56,7 +56,7 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             InvertTreeWthDFSRecursive(tree.RootNode);
         }
 
-        private static void InvertTreeWthDFSRecursive(BSTNode node)
+        private static void InvertTreeWthDFSRecursive(BSTNode<int> node)
         {
             if (node == null)
                 return;
@@ -67,9 +67,9 @@ namespace AlgorithmsDataStructures2.TreeTraversalOrdersTask3
             InvertTreeWthDFSRecursive(node.RightChild);
         }
 
-        private static void InvertNode(BSTNode node)
+        private static void InvertNode(BSTNode<int> node)
         {
-            BSTNode leftNode = node.LeftChild;
+            BSTNode<int> leftNode = node.LeftChild;
             node.LeftChild = node.RightChild;
             node.RightChild = leftNode;
         }

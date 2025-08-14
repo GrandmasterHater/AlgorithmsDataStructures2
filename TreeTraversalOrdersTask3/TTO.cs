@@ -12,7 +12,7 @@ namespace AlgorithmsDataStructures2
         public BSTNode RightChild; // правый потомок	
     }
     
-    public class BSTNode<T>
+    public class BSTNode<T> 
     {
         public int NodeKey; // ключ узла
         public T NodeValue; // значение в узле
@@ -29,6 +29,28 @@ namespace AlgorithmsDataStructures2
             Parent = parent;
             LeftChild = null;
             RightChild = null;
+        }
+        
+        public static explicit operator BSTNode(BSTNode<T> node)
+        {
+            if (node == null) 
+                return null;
+
+            BSTNode abstractNode = new BSTNode
+            {
+                NodeKey = node.NodeKey
+            };
+            
+            abstractNode.LeftChild = (BSTNode)node.LeftChild;
+            abstractNode.RightChild = (BSTNode)node.RightChild;
+
+            if (abstractNode.LeftChild != null) 
+                abstractNode.LeftChild.Parent = abstractNode;
+
+            if (abstractNode.RightChild != null) 
+                abstractNode.RightChild.Parent = abstractNode;
+
+            return abstractNode;
         }
     }
 
@@ -142,7 +164,7 @@ namespace AlgorithmsDataStructures2
             if (Root == null)
                 return new List<BSTNode>();
 
-            BSTNode abstractRoot = ConvertToBSTNodeTreeRecursive(Root, null);;
+            BSTNode abstractRoot = (BSTNode)Root;
             List<BSTNode> nodes = new List<BSTNode>();
             nodes.Add(abstractRoot);
             
@@ -155,7 +177,7 @@ namespace AlgorithmsDataStructures2
             if (Root == null)
                 return new List<BSTNode>();
             
-            BSTNode abstractRoot = ConvertToBSTNodeTreeRecursive(Root, null);
+            BSTNode abstractRoot = (BSTNode)Root;
             List<BSTNode> nodes = new List<BSTNode>();
             
             switch (order)
@@ -326,23 +348,6 @@ namespace AlgorithmsDataStructures2
             deletingNode.Parent = null;
 
             return true;
-        }
-        
-        private BSTNode ConvertToBSTNodeTreeRecursive(BSTNode<T> node, BSTNode parent)
-        {
-            if (node == null)
-                return null;
-            
-            BSTNode abstractNode = new BSTNode()
-            {
-                NodeKey = node.NodeKey,
-                Parent = parent
-            };
-
-            abstractNode.LeftChild = ConvertToBSTNodeTreeRecursive(node.LeftChild, abstractNode);
-            abstractNode.RightChild = ConvertToBSTNodeTreeRecursive(node.RightChild, abstractNode);
-
-            return abstractNode;
         }
     }
 }

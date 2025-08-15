@@ -15,7 +15,7 @@ namespace AlgorithmsDataStructures2
             
             for (int currentFirstIndex = firstKeyIndex.Value, currentSecondIndex = secondKeyIndex.Value;
                  currentFirstIndex >= 0 && currentSecondIndex >= 0;
-                 (currentFirstIndex, currentSecondIndex) = GetNextParentIndexs(currentFirstIndex, currentSecondIndex))
+                 (currentFirstIndex, currentSecondIndex) = GetNextParentIndexes(currentFirstIndex, currentSecondIndex))
             {
                 if (currentFirstIndex == currentSecondIndex)
                     return tree.Tree[currentFirstIndex];
@@ -24,7 +24,7 @@ namespace AlgorithmsDataStructures2
             return null;
         }
         
-        private static (int nextFirstIndex, int nextSecondIndex) GetNextParentIndexs(int currentFirstIndex, int currentSecondIndex)
+        private static (int nextFirstIndex, int nextSecondIndex) GetNextParentIndexes(int currentFirstIndex, int currentSecondIndex)
         {
             return currentFirstIndex > currentSecondIndex
                 ? (GetParentIndex(currentFirstIndex), currentSecondIndex)
@@ -70,3 +70,4 @@ namespace AlgorithmsDataStructures2
         }
     }
 }
+

@@ -5,7 +5,7 @@ namespace AlgorithmsDataStructures2
 {
     public static class BalancedBST_2
     {
-        //Exercise 5, task 1, time complexity O(n log n), space complexity O(n)
+        //Exercise 5, task 3, time complexity O(n log n), space complexity O(n)
         public static int[] RemoveKey(int[] tree, int key)
         {
             int indexToRemove = FindKeyIndex(tree, key);

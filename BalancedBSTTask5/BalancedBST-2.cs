@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace AlgorithmsDataStructures2
+namespace AlgorithmsDataStructures2.Task5
 {
     public static class BalancedBST_2
     {

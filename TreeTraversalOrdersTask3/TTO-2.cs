@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AlgorithmsDataStructures2
+namespace AlgorithmsDataStructures2.Task3
 {
     public static class TTO_2
     {

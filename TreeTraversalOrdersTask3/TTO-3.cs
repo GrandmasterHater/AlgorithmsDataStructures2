@@ -2,7 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 
-namespace AlgorithmsDataStructures2
+namespace AlgorithmsDataStructures2.Task3
 {
     [TestFixture]
     public class TTO_3

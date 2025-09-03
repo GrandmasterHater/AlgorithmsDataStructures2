@@ -5,11 +5,19 @@ namespace AlgorithmsDataStructures2
 {
     public class SimpleTreeNode<T>
     {
-        public T NodeValue; 
-        public SimpleTreeNode<T> Parent; 
-        public List<SimpleTreeNode<T>> Children; 
+        public T NodeValue; // значение в узле
+        public SimpleTreeNode<T> Parent; // родитель или null для корня
+        public List<SimpleTreeNode<T>> Children; // список дочерних узлов или null
 	
         public bool IsLeaf => Children == null || Children.Count == 0;
+        public int Level { get; set; }
+
+        public SimpleTreeNode(T val, SimpleTreeNode<T> parent)
+        {
+            NodeValue = val;
+            Parent = parent;
+            Children = null;
+        }
         
         internal void AddChildNode(SimpleTreeNode<T> childNode)
         {
@@ -36,9 +44,15 @@ namespace AlgorithmsDataStructures2
 	
     public class SimpleTree<T>
     {
-        public SimpleTreeNode<T> Root;
-        public int NodeCount;
+        public SimpleTreeNode<T> Root; // корень, может быть null
+        private int _nodeCount;
 
+        public SimpleTree(SimpleTreeNode<T> root)
+        {
+            Root = root;
+            _nodeCount = root is null ? 0 : 1;
+        }
+        
         // Exercise 5, task 1, time complexity O(n), space complexity O(n)
         public List<T> EvenTrees()
         {
@@ -54,7 +68,7 @@ namespace AlgorithmsDataStructures2
             
             return result;
         }
-        
+	
         // Exercise 1, time complexity O(1), space complexity O(1)
         public void AddChild(SimpleTreeNode<T> ParentNode, SimpleTreeNode<T> NewChild)
         {
@@ -66,7 +80,7 @@ namespace AlgorithmsDataStructures2
             else
                 ParentNode.AddChildNode(NewChild);
             
-            ++NodeCount;
+            ++_nodeCount;
         }
 
         // Exercise 1, time complexity O(c) where c - children count, space complexity O(h) where h - tree height
@@ -83,7 +97,7 @@ namespace AlgorithmsDataStructures2
             NodeToDelete.SetParentNode(null);
 
             int deletingCount = CountFromNodeRecursive(NodeToDelete, 0);
-            NodeCount -= deletingCount;
+            _nodeCount -= deletingCount;
         }
 
         // Exercise 1, time complexity O(n), space complexity O(n)
@@ -127,9 +141,20 @@ namespace AlgorithmsDataStructures2
         // Exercise 1, time complexity O(1), space complexity O(1)
         public int Count()
         {
-            return NodeCount;
+            return _nodeCount;
         }
 
+        // Exercise 1, time complexity O(n), space complexity O(h) where h - tree height
+        public int LeafCount()
+        {
+            int count = 0;
+            
+            if (Root != null)
+                count = LeafCountRecursive(Root, 0);
+            
+            return count;
+        }
+        
         private int GetVerticesCountRecursive(SimpleTreeNode<T> node, List<T> result)
         {
             if (node.IsLeaf)
@@ -150,6 +175,7 @@ namespace AlgorithmsDataStructures2
             
             return count;
         }
+
 
         private void GetAllNodesRecursive(SimpleTreeNode<T> node, List<SimpleTreeNode<T>> nodes)
         {
@@ -192,7 +218,19 @@ namespace AlgorithmsDataStructures2
             
             return accumulator;
         }
-
+        
+        private int LeafCountRecursive(SimpleTreeNode<T> node, int accumulator)
+        {
+            if (node.IsLeaf)
+                return ++accumulator;
+            
+            foreach (var child in node.Children)
+            {
+                accumulator = LeafCountRecursive(child, accumulator);
+            }
+            
+            return accumulator;
+        }
     }
 }
 

@@ -10,13 +10,6 @@ namespace AlgorithmsDataStructures2
         public List<SimpleTreeNode<T>> Children; 
 	
         public bool IsLeaf => Children == null || Children.Count == 0;
-
-        public SimpleTreeNode(T val, SimpleTreeNode<T> parent)
-        {
-            NodeValue = val;
-            Parent = parent;
-            Children = null;
-        }
         
         internal void AddChildNode(SimpleTreeNode<T> childNode)
         {
@@ -44,13 +37,7 @@ namespace AlgorithmsDataStructures2
     public class SimpleTree<T>
     {
         public SimpleTreeNode<T> Root;
-        private int _nodeCount;
-
-        public SimpleTree(SimpleTreeNode<T> root)
-        {
-            Root = root;
-            _nodeCount = root is null ? 0 : 1;
-        }
+        public int NodeCount;
 
         // Exercise 5, task 1, time complexity O(n), space complexity O(n)
         public List<T> EvenTrees()
@@ -79,7 +66,7 @@ namespace AlgorithmsDataStructures2
             else
                 ParentNode.AddChildNode(NewChild);
             
-            ++_nodeCount;
+            ++NodeCount;
         }
 
         // Exercise 1, time complexity O(c) where c - children count, space complexity O(h) where h - tree height
@@ -96,7 +83,7 @@ namespace AlgorithmsDataStructures2
             NodeToDelete.SetParentNode(null);
 
             int deletingCount = CountFromNodeRecursive(NodeToDelete, 0);
-            _nodeCount -= deletingCount;
+            NodeCount -= deletingCount;
         }
 
         // Exercise 1, time complexity O(n), space complexity O(n)
@@ -140,7 +127,7 @@ namespace AlgorithmsDataStructures2
         // Exercise 1, time complexity O(1), space complexity O(1)
         public int Count()
         {
-            return _nodeCount;
+            return NodeCount;
         }
 
         private int GetVerticesCountRecursive(SimpleTreeNode<T> node, List<T> result)

@@ -15,26 +15,34 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void AddChild_WhenParentArgumentNullAndTreeHasRoot_ThrowArgumentNullException()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(new SimpleTreeNode<int>(3, null));
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null}, 
+                NodeCount = 1
+            };
 
-            Assert.Throws<ArgumentNullException>(() => tree.AddChild(null, new SimpleTreeNode<int>(1, null)));
+            Assert.Throws<ArgumentNullException>(() => tree.AddChild(null, new SimpleTreeNode<int>() {NodeValue = 1, Parent = null}));
         }
         
         [Test]
         public void AddChild_WhenChildArgumentNull_ThrowArgumentNullException()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(null);
+            SimpleTree<int> tree = new SimpleTree<int>();
 
-            Assert.Throws<ArgumentNullException>(() => tree.AddChild(new SimpleTreeNode<int>(1, null), null));
+            Assert.Throws<ArgumentNullException>(() => tree.AddChild(new SimpleTreeNode<int>() {NodeValue = 1, Parent = null}, null));
         }
         
         [Test]
         public void AddChild_AddNewChildNode_ChildNodeAdded()
         { 
-            SimpleTree<int> tree = new SimpleTree<int>(new SimpleTreeNode<int>(5, null));
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null}, 
+                NodeCount = 1
+            };
             
-            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>(2, null);
+            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
             tree.AddChild(parentNode, childNode);
 
             Assert.That(childNode.Parent, Is.EqualTo(parentNode));
@@ -44,9 +52,9 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void AddChild_WhenRootIsNull_ChildBecomeRoot()
         { 
-            SimpleTree<int> tree = new SimpleTree<int>(null);
+            SimpleTree<int> tree = new SimpleTree<int>();
             
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
             tree.AddChild(null, rootNode);
 
             Assert.That(tree.Root, Is.EqualTo(rootNode));
@@ -56,8 +64,8 @@ namespace AlgorithmsDataStructures2
         public void AddChild_WhenRootIsNull_CountIncremented()
         { 
             int expectedCount = 1;
-            SimpleTree<int> tree = new SimpleTree<int>(null);
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(2, null);
+            SimpleTree<int> tree = new SimpleTree<int>();
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
             
             tree.AddChild(null, rootNode);
 
@@ -68,12 +76,16 @@ namespace AlgorithmsDataStructures2
         public void AddChild_WhenRootIsNotNull_CountIncremented()
         { 
             int expectedCount = 3;
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
-            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>(2, null);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
+            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
             tree.AddChild(rootNode, parentNode);
             
-            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>(3, null);
+            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null};
             tree.AddChild(parentNode, childNode);
 
             Assert.That(tree.Count(), Is.EqualTo(expectedCount));
@@ -82,7 +94,11 @@ namespace AlgorithmsDataStructures2
         [TestCaseSource(nameof(AddChildNotValidArguments))]
         public void AddChild_WhenArgumentsNotValid_CountNotChanged(SimpleTreeNode<int> parentNode, SimpleTreeNode<int> childNode)
         { 
-            SimpleTree<int> tree = new SimpleTree<int>(new SimpleTreeNode<int>(3, null));
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null}, 
+                NodeCount = 1
+            };
             int expectedCount = 1;
 
             try
@@ -97,8 +113,12 @@ namespace AlgorithmsDataStructures2
         [TestCaseSource(nameof(AddChildNotValidArguments))]
         public void AddChild_WhenArgumentsNotValid_RootNotChanged(SimpleTreeNode<int> parentNode, SimpleTreeNode<int> childNode)
         { 
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             SimpleTreeNode<int> expectedRoot = tree.Root;
 
             try
@@ -117,7 +137,7 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void DeleteNode_WhenNodeToDeleteNull_ThrowArgumentNullException()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(null);
+            SimpleTree<int> tree = new SimpleTree<int>();
 
             Assert.Throws<ArgumentNullException>(() => tree.DeleteNode(null));
         }
@@ -125,9 +145,13 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void DeleteNode_WhenTreeExistNode_NodeDeleted()
         {
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> leafNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> leafNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             tree.AddChild(rootNode, leafNode);
             
             tree.DeleteNode(leafNode);
@@ -138,9 +162,13 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void DeleteNode_WhenDeleteExistedNode_CountDecremented()
         {
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> leafNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> leafNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             tree.AddChild(rootNode, leafNode);
             
             tree.DeleteNode(leafNode);
@@ -151,8 +179,12 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void DeleteNode_WhenDeleteRootNode_RootIsNull()
         {
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             
             tree.DeleteNode(rootNode);
             
@@ -162,8 +194,12 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void DeleteNode_WhenArgumentNotValid_CountNotChanged()
         {
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
 
             try
             {
@@ -189,8 +225,12 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void DeleteNode_WhenArgumentNotValid_RootNotChanged()
         {
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
 
             try
             {
@@ -220,7 +260,7 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void GetAllNodes_WhenTreeIsEmpty_ReturnEmptyList()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(null);
+            SimpleTree<int> tree = new SimpleTree<int>();
             
             List<SimpleTreeNode<int>> actualNodes = tree.GetAllNodes();
 
@@ -250,11 +290,15 @@ namespace AlgorithmsDataStructures2
         public void FindNodeByValue_WhenTreeHasNotValues_ReturnEmptyList()
         {
             int expectedNodeValue = 5;
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> firstNode = new SimpleTreeNode<int>(2, null);
-            SimpleTreeNode<int> secondNode = new SimpleTreeNode<int>(3, null);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> firstNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
+            SimpleTreeNode<int> secondNode = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null};
             
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             tree.AddChild(rootNode, firstNode);
             tree.AddChild(rootNode, secondNode);
             
@@ -266,7 +310,7 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void FindNodeByValue_WhenTreeIsEmpty_ReturnEmptyList()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(null);
+            SimpleTree<int> tree = new SimpleTree<int>();
             
             List<SimpleTreeNode<int>> actualNodes = tree.FindNodesByValue(5);
 
@@ -280,8 +324,8 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void MoveNode_WhenOriginalNodeIsNull_ArgumentNullException()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(null);
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
+            SimpleTree<int> tree = new SimpleTree<int>();
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
 
             Assert.Throws<ArgumentNullException>(() => tree.MoveNode(null,  node));
         }
@@ -289,8 +333,8 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void MoveNode_WhenNewParentIsNull_ArgumentNullException()
         {
-            SimpleTree<int> tree = new SimpleTree<int>(null);
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
+            SimpleTree<int> tree = new SimpleTree<int>();
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
 
             Assert.Throws<ArgumentNullException>(() => tree.MoveNode(node, null));
         }
@@ -298,11 +342,15 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void MoveNode_WhenMoveRootNode_InvalidOperationException()
         {
-            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> firstNode = new SimpleTreeNode<int>(2, null);
-            SimpleTreeNode<int> secondNode = new SimpleTreeNode<int>(3, null);
+            SimpleTreeNode<int> rootNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> firstNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
+            SimpleTreeNode<int> secondNode = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null};
             
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             tree.AddChild(rootNode, firstNode);
             tree.AddChild(rootNode, secondNode);
             
@@ -336,7 +384,7 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void AddChildNode_WhenChildNodeIsNull_ArgumentNullException()
         {
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
             
             Assert.Throws<ArgumentNullException>(() =>  node.AddChildNode(null));
         }
@@ -344,8 +392,8 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void AddChildNode_AddNewChildNode_ChildNodeAdded()
         {
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>(2, null);
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
             
             node.AddChildNode(childNode);
             
@@ -355,8 +403,8 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void AddChildNode_AddNewChildNode_ParentSet()
         {
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>(2, null);
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> childNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
             
             node.AddChildNode(childNode);
             
@@ -370,9 +418,9 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void RemoveChild_WhenNodeExists_ArgumentNullException()
         {
-            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> firstChildNode = new SimpleTreeNode<int>(2, null);
-            SimpleTreeNode<int> secondChildNode = new SimpleTreeNode<int>(3, null);
+            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> firstChildNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
+            SimpleTreeNode<int> secondChildNode = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null};
             
             parentNode.AddChildNode(firstChildNode);
             parentNode.AddChildNode(secondChildNode);
@@ -385,9 +433,9 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void RemoveChild_WhenExistSeveralNodes_OnlyExpectedNodeRemoved()
         {
-            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> firstChildNode = new SimpleTreeNode<int>(2, null);
-            SimpleTreeNode<int> secondChildNode = new SimpleTreeNode<int>(3, null);
+            SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> firstChildNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
+            SimpleTreeNode<int> secondChildNode = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null};
             
             parentNode.AddChildNode(firstChildNode);
             parentNode.AddChildNode(secondChildNode);
@@ -400,7 +448,7 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void RemoveChild_WhenNodeIsLeaf_ReturnWithoutActions()
         {
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
             
             node.RemoveChild(null);
             
@@ -414,7 +462,7 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void IsLeaf_WhenNodeHasNoChildren_ReturnTrue()
         {
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
             
             Assert.That(node.IsLeaf, Is.True);
         }
@@ -422,8 +470,8 @@ namespace AlgorithmsDataStructures2
         [Test]
         public void IsLeaf_WhenNodeHasChildren_ReturnFalse()
         {
-            SimpleTreeNode<int> node = new SimpleTreeNode<int>(1, null);
-            node.AddChildNode(new SimpleTreeNode<int>(2, null));
+            SimpleTreeNode<int> node = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            node.AddChildNode(new SimpleTreeNode<int>() {NodeValue = 2, Parent = null});
             
             Assert.That(node.IsLeaf, Is.False);
         }
@@ -875,7 +923,7 @@ namespace AlgorithmsDataStructures2
         
         private SimpleTree<int> BuildTree(int[] edges)
         {
-            var tree = new SimpleTree<int>(null);
+            var tree = new SimpleTree<int>();
             var nodes = new Dictionary<int, SimpleTreeNode<int>>();
 
             for (int i = 0; i < edges.Length; i += 2)
@@ -885,7 +933,7 @@ namespace AlgorithmsDataStructures2
 
                 if (!nodes.ContainsKey(parentVal))
                 {
-                    var parentNode = new SimpleTreeNode<int>(parentVal, null);
+                    var parentNode = new SimpleTreeNode<int>() {NodeValue = parentVal, Parent = null};
                     nodes[parentVal] = parentNode;
                     if (tree.Root == null)
                         tree.AddChild(null, parentNode);
@@ -893,7 +941,7 @@ namespace AlgorithmsDataStructures2
 
                 if (!nodes.ContainsKey(childVal))
                 {
-                    var childNode = new SimpleTreeNode<int>(childVal, null);
+                    var childNode = new SimpleTreeNode<int>() {NodeValue = childVal, Parent = null};
                     nodes[childVal] = childNode;
                 }
 
@@ -907,8 +955,8 @@ namespace AlgorithmsDataStructures2
         {
             get
             {
-                SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>(1, null);
-                SimpleTreeNode<int> childNode = new SimpleTreeNode<int>(2, null);
+                SimpleTreeNode<int> parentNode = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+                SimpleTreeNode<int> childNode = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
                 yield return new TestCaseData(null, childNode);
                 yield return new TestCaseData(parentNode, null);
                 yield return new TestCaseData(null, null);
@@ -924,20 +972,24 @@ namespace AlgorithmsDataStructures2
         /// </summary>
         private static SimpleTree<int> CreateSimpleTree(out List<SimpleTreeNode<int>> nodes)
         {
-            SimpleTreeNode<int> rootNode       = new SimpleTreeNode<int>(1, null);
-            SimpleTreeNode<int> firstNode      = new SimpleTreeNode<int>(2, null);
-            SimpleTreeNode<int> secondNode     = new SimpleTreeNode<int>(3, null);
-            SimpleTreeNode<int> firstLeafNode  = new SimpleTreeNode<int>(4, null);
-            SimpleTreeNode<int> secondLeafNode = new SimpleTreeNode<int>(5, null);
-            SimpleTreeNode<int> thirdLeafNode  = new SimpleTreeNode<int>(6, null);
-            SimpleTreeNode<int> fourthLeafNode = new SimpleTreeNode<int>(7, null);
+            SimpleTreeNode<int> rootNode       = new SimpleTreeNode<int>() {NodeValue = 1, Parent = null};
+            SimpleTreeNode<int> firstNode      = new SimpleTreeNode<int>() {NodeValue = 2, Parent = null};
+            SimpleTreeNode<int> secondNode     = new SimpleTreeNode<int>() {NodeValue = 3, Parent = null};
+            SimpleTreeNode<int> firstLeafNode  = new SimpleTreeNode<int>() {NodeValue = 4, Parent = null};
+            SimpleTreeNode<int> secondLeafNode = new SimpleTreeNode<int>() {NodeValue = 5, Parent = null};
+            SimpleTreeNode<int> thirdLeafNode  = new SimpleTreeNode<int>() {NodeValue = 6, Parent = null};
+            SimpleTreeNode<int> fourthLeafNode = new SimpleTreeNode<int>() {NodeValue = 7, Parent = null};
 
             nodes = new List<SimpleTreeNode<int>>
             {
                 rootNode, firstNode, secondNode, firstLeafNode, secondLeafNode, thirdLeafNode, fourthLeafNode
             };
             
-            SimpleTree<int> tree = new SimpleTree<int>(rootNode);
+            SimpleTree<int> tree = new SimpleTree<int>()
+            {
+                Root = rootNode, 
+                NodeCount = 1
+            };
             tree.AddChild(rootNode, firstNode);
             tree.AddChild(rootNode, secondNode);
             tree.AddChild(firstNode, firstLeafNode);

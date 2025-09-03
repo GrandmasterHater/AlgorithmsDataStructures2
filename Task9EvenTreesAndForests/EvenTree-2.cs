@@ -99,16 +99,10 @@ namespace AlgorithmsDataStructures2
         }
     }
 
-    // промежуточный результат поиска
     public class BSTFind<T>
     {
-        // null если в дереве вообще нету узлов
         public BSTNode<T> Node;
-	
-        // true если узел найден
         public bool NodeHasKey;
-	
-        // true, если родительскому узлу надо добавить новый левым
         public bool ToLeft;
 	
         public BSTFind() { Node = null; }
@@ -116,7 +110,7 @@ namespace AlgorithmsDataStructures2
 
     public class BST<T>
     {
-        BSTNode<T> Root; // корень дерева, или null
+        BSTNode<T> Root;
         private int _count;
 
         public BSTNode<T> RootNode => Root;

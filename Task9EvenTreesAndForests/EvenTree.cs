@@ -10,7 +10,6 @@ namespace AlgorithmsDataStructures2
         public List<SimpleTreeNode<T>> Children; 
 	
         public bool IsLeaf => Children == null || Children.Count == 0;
-        public int Level { get; set; }
 
         public SimpleTreeNode(T val, SimpleTreeNode<T> parent)
         {
@@ -44,7 +43,7 @@ namespace AlgorithmsDataStructures2
 	
     public class SimpleTree<T>
     {
-        public SimpleTreeNode<T> Root; // корень, может быть null
+        public SimpleTreeNode<T> Root;
         private int _nodeCount;
 
         public SimpleTree(SimpleTreeNode<T> root)
@@ -52,7 +51,23 @@ namespace AlgorithmsDataStructures2
             Root = root;
             _nodeCount = root is null ? 0 : 1;
         }
-	
+
+        // Exercise 5, task 1, time complexity O(n), space complexity O(n)
+        public List<T> EvenTrees()
+        {
+            if (Root == null)
+                return new List<T>();
+            
+            if (Count() % 2 != 0)
+                return new List<T>();
+            
+            List<T> result = new List<T>();
+            
+            GetVerticesCountRecursive(Root, result);
+            
+            return result;
+        }
+        
         // Exercise 1, time complexity O(1), space complexity O(1)
         public void AddChild(SimpleTreeNode<T> ParentNode, SimpleTreeNode<T> NewChild)
         {
@@ -127,22 +142,6 @@ namespace AlgorithmsDataStructures2
         {
             return _nodeCount;
         }
-        
-        // Exercise 5, task 1, time complexity O(n), space complexity O(n)
-        public List<T> EvenTrees()
-        {
-            if (Root == null)
-                return new List<T>();
-            
-            if (Count() % 2 != 0)
-                return new List<T>();
-            
-            List<T> result = new List<T>();
-            
-            GetVerticesCountRecursive(Root, result);
-            
-            return result;
-        }
 
         private int GetVerticesCountRecursive(SimpleTreeNode<T> node, List<T> result)
         {
@@ -206,19 +205,7 @@ namespace AlgorithmsDataStructures2
             
             return accumulator;
         }
-        
-        private int LeafCountRecursive(SimpleTreeNode<T> node, int accumulator)
-        {
-            if (node.IsLeaf)
-                return ++accumulator;
-            
-            foreach (var child in node.Children)
-            {
-                accumulator = LeafCountRecursive(child, accumulator);
-            }
-            
-            return accumulator;
-        }
+
     }
 }
 

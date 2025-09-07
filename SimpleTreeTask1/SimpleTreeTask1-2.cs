@@ -1,4 +1,4 @@
-﻿namespace AlgorithmsDataStructures2
+﻿namespace AlgorithmsDataStructures2.Task1
 {
     public class SimpleTreeTask1_2
     {

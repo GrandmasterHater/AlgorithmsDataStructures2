@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
-namespace AlgorithmsDataStructures2
+namespace AlgorithmsDataStructures2.Task1
 {
     [TestFixture]
     public class SimpleTreeTask1_3

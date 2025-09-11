@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AlgorithmsDataStructures2.Task10Pathfinding
+namespace AlgorithmsDataStructures2
 {
     public class Vertex<T>
     {
@@ -28,14 +28,45 @@ namespace AlgorithmsDataStructures2.Task10Pathfinding
             m_adjacency = new int [size,size];
             vertex = new Vertex<T> [size];
         }
+        
+        // Exercise 11, task 1, time complexity O(n^2), space complexity O(n)
+        public List<Vertex<T>> BreadthFirstSearch(int VFrom, int VTo)
+        {
+            ResetHitFlags();
+            
+            Queue<int> queue = new Queue<int>();
+            int[] paths = new int[max_vertex];
+            
+            vertex[VFrom].Hit = true;
+            queue.Enqueue(VFrom);
+
+            while (queue.Count > 0)
+            {
+                int currentVertexIndex = queue.Dequeue();
+                
+                if (currentVertexIndex == VTo)
+                    break;
+                
+                CollectAdjacentVertices(currentVertexIndex, queue, paths);
+            }
+            
+            if (vertex[VTo].Hit == false)
+                return new List<Vertex<T>>();
+            
+            List<Vertex<T>> result = new List<Vertex<T>>(max_vertex); 
+            
+            for (int i = VTo; i != VFrom; i = paths[i])
+                result.Insert(0, vertex[i]);
+            
+            result.Insert(0, vertex[VFrom]);
+            
+            return result; 
+        }
 
         // Exercise 10, time complexity O(n^2), space complexity O(n)
         public List<Vertex<T>> DepthFirstSearch(int VFrom, int VTo)
         {
-            foreach (Vertex<T> v in vertex)
-            {
-                v.Hit = false;
-            }
+            ResetHitFlags();
             
             Stack<int> pathStack = new Stack<int>();
             pathStack = DepthFirstSearchRecursive(VFrom, VTo, pathStack);
@@ -127,6 +158,28 @@ namespace AlgorithmsDataStructures2.Task10Pathfinding
             pathStack.Pop();
             return null;
         }
+        
+        private void ResetHitFlags()
+        {
+            foreach (Vertex<T> v in vertex)
+            {
+                v.Hit = false;
+            }
+        }
+        
+        private void CollectAdjacentVertices(int currentVertexIndex, Queue<int> queue, int[] path)
+        {
+            for (int i = 0; i < max_vertex; ++i)
+            {
+                if (m_adjacency[currentVertexIndex, i] == 1 && !vertex[i].Hit)
+                {
+                    vertex[i].Hit = true;
+                    path[i] = currentVertexIndex;
+                    queue.Enqueue(i);
+                }
+            }
+        }
 
     }
 }
+

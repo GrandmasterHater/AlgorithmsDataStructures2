@@ -69,7 +69,7 @@ namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
             
             List<List<int>> cycles = new List<List<int>>();
 
-            BFSVertexInfo currentVertex = new BFSVertexInfo() { VertexIndex = 0, Distance = 0, ParentIndex = -1 };
+            BFSVertexInfo currentVertex = new BFSVertexInfo() { VertexIndex = 0, Distance = 0, Parent = null };
             Queue<BFSVertexInfo> bfsQueue = new Queue<BFSVertexInfo>();
             graph.vertex[currentVertex.VertexIndex].Hit = true;
             bfsQueue.Enqueue(currentVertex);
@@ -86,21 +86,22 @@ namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
         
         private static void HandleAdjacentVertices<T>(
             SimpleGraph<T> graph, 
-            (int vertexIndex, int distance) vertex, 
-            Queue<(int vertexIndex, int distance)> queue,
+            BFSVertexInfo vertex, 
+            Queue<BFSVertexInfo> queue,
             List<List<int>> cycles)
         {
             for (int i = 0; i < graph.max_vertex; ++i)
             {
                 bool hasEdge = graph.IsEdge(vertex.vertexIndex, i);
+                bool hasHit = graph.vertex[i].Hit;
                 
-                if (hasEdge && !graph.vertex[i].Hit)
+                if (hasEdge && !hasHit)
                 {
                     graph.vertex[i].Hit = true;
-                    queue.Enqueue((i, vertex.distance + 1));
+                    queue.Enqueue(new BFSVertexInfo {VertexIndex = i, Distance = vertex.Distance, Parent = vertex});
                 }
 
-                if (hasEdge && graph.vertex[i].Hit && i != vertex.vertexIndex)
+                if (hasEdge && hasHit && i != vertex.vertexIndex)
                 {
                     List<int> cycle = CollectCycleVertices(graph, vertex, i, queue);
                     cycles.Add(cycle);
@@ -108,19 +109,48 @@ namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
             }
         }
 
-        private static List<int> CollectCycleVertices<T>(SimpleGraph<T> graph, (int vertexIndex, int distance) vertex, int i, Queue<(int vertexIndex, int distance)> queue)
+        private static List<int> CollectCycleVertices<T>(SimpleGraph<T> graph, BFSVertexInfo leftVertex, BFSVertexInfo rightVertex, Queue<BFSVertexInfo> queue)
         {
-            throw new System.NotImplementedException();
+            List<int> vertices = new List<int>();
+
+            BFSVertexInfo currentLeft, currentRight;
+
+            for (currentLeft = leftVertex, currentRight = rightVertex, leftVertex = nextLeft, rightVertex = nextRight;
+                 currentLeft.VertexIndex != currentRight.VertexIndex;
+                 currentLeft = nextLeft, currentRight = nextRight)
+            {
+                if (currentLeft.Distance < currentRight.Distance)
+                {
+                    nextRight = currentRight.Parent;
+                    vertices.Insert(vertices.Length - 1, currentRight.VertexIndex);
+                }
+                else if (currentLeft.Distance > currentRight.Distance)
+                {
+                    nextLeft = currentLeft.Parent;
+                    vertices.Insert(0, currentLeft.VertexIndex);
+                }
+                else
+                {
+                    nextLeft = currentLeft.Parent;
+                    nextRight = currentRight.Parent;
+                    vertices.Insert(0, currentLeft.VertexIndex);
+                    vertices.Insert(vertices.Length - 1, currentRight.VertexIndex);
+                }
+            }
+
+            vertices.Insert(0, currentLeft.VertexIndex);
+
+            return vertices;
         }
 
         #endregion
     }
     
-    internal struct BFSVertexInfo
+    internal class BFSVertexInfo
     {
         public int VertexIndex { get; set; }
         public int Distance { get; set; }
-        public int ParentIndex { get; set; }
+        public BFSVertexInfo Parent { get; set; }
     }
 }
 

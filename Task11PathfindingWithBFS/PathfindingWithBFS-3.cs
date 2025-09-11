@@ -320,6 +320,100 @@ namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
         }
 
         #endregion
+
+        #region FindCycles
+
+        [Test]
+        public void FindCycles_WhenGraphIsEmpty_ReturnsEmptyList()
+        {
+            var graph = new SimpleGraph<int>(0);
+
+            var cycles = graph.FindCycles();
+
+            Assert.That(cycles, Is.Empty);
+        }
+
+        [Test]
+        public void FindCycles_WhenGraphHasNoCycles_ReturnsEmptyList()
+        {
+            var graph = new SimpleGraph<int>(3);
+
+            for (int i = 0; i < 3; i++)
+                graph.AddVertex(i);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+
+            var cycles = graph.FindCycles();
+
+            Assert.That(cycles, Is.Empty);
+        }
+
+        [Test]
+        public void FindCycles_WhenGraphHasOneCycle_ReturnsOneCycle()
+        {
+            var graph = new SimpleGraph<int>(3);
+            for (int i = 0; i < 3; i++) 
+                graph.AddVertex(i);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+            int expectedCyclesCount = 1;
+
+            var cycles = graph.FindCycles();
+
+            Assert.That(cycles.Count, Is.EqualTo(expectedCyclesCount));
+            Assert.That(cycles[0], Does.Contain(0).And.Contain(1).And.Contain(2));
+        }
+
+        [Test]
+        public void FindCycles_WhenGraphHasMultipleCycles_ReturnsAllCycles()
+        {
+            var graph = new SimpleGraph<int>(5);
+            for (int i = 0; i < 5; i++) graph.AddVertex(i);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 3);
+            graph.AddEdge(3, 0);
+            graph.AddEdge(0, 2);
+            graph.AddEdge(3, 4);
+            graph.AddEdge(2, 4);
+            int expectedCyclesCount = 6;
+
+            var cycles = graph.FindCycles();
+
+            Assert.That(cycles.Count, Is.EqualTo(expectedCyclesCount));
+            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(0) && c.Contains(1) && c.Contains(2)));
+            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(0) && c.Contains(2) && c.Contains(3)));
+        }
+        
+        [Test]
+        public void FindCycles_WhenGraphHasTwoDisconnectedTriangles_ReturnsTwoCycles()
+        {
+            var graph = new SimpleGraph<int>(6);
+            for (int i = 0; i < 6; i++) graph.AddVertex(i);
+
+            // Первый треугольник 0-1-2-0
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+
+            // Второй треугольник 3-4-5-3
+            graph.AddEdge(3, 4);
+            graph.AddEdge(4, 5);
+            graph.AddEdge(5, 3);
+            int expectedCyclesCount = 2;
+
+            var cycles = graph.FindCycles();
+
+            Assert.That(cycles.Count, Is.EqualTo(expectedCyclesCount));
+            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(0) && c.Contains(1) && c.Contains(2)));
+            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(3) && c.Contains(4) && c.Contains(5)));
+        }
+
+        #endregion
     }
 }
 

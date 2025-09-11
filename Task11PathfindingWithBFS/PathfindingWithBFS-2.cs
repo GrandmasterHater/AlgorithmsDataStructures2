@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
@@ -60,97 +61,142 @@ namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
         
         #region FindCycles
         
+        // Exercise 11, task 3, time complexity O(n^3), space complexity O(с*n)
         public static List<List<int>> FindCycles<T>(this SimpleGraph<T> graph)
+        {
+            if (graph.vertex.Length == 0)
+                return new List<List<int>>();
+            
+            List<List<int>> cycles = new List<List<int>>();
+
+            for (var index = 0; index < graph.vertex.Length; index++)
+            {
+                FindCyclesFromVertex(index, graph, cycles);
+            }
+
+            RemoveDuplicates(cycles);
+
+            return cycles;
+        }
+        
+        public static void FindCyclesFromVertex<T>(int vertexIndex, SimpleGraph<T> graph, List<List<int>> cycles)
         {
             foreach (Vertex<T> vertex in graph.vertex)
             {
                 vertex.Hit = false;
             }
-            
-            List<List<int>> cycles = new List<List<int>>();
 
-            BFSVertexInfo currentVertex = new BFSVertexInfo() { VertexIndex = 0, Distance = 0, Parent = null };
+            BFSVertexInfo currentVertex = new BFSVertexInfo() { VertexIndex = vertexIndex, Distance = 0, Parent = null };
+            Dictionary<int, BFSVertexInfo> visited = new Dictionary<int, BFSVertexInfo>();
             Queue<BFSVertexInfo> bfsQueue = new Queue<BFSVertexInfo>();
             graph.vertex[currentVertex.VertexIndex].Hit = true;
             bfsQueue.Enqueue(currentVertex);
+            visited.Add(currentVertex.VertexIndex, currentVertex);
 
             while (bfsQueue.Count > 0)
             {
                 currentVertex = bfsQueue.Dequeue();
 
-                HandleAdjacentVertices(graph, currentVertex, bfsQueue, cycles);
+                HandleAdjacentVertices(graph, currentVertex, bfsQueue, cycles, visited);
             }
-
-            return cycles;
         }
-        
-        private static void HandleAdjacentVertices<T>(
-            SimpleGraph<T> graph, 
-            BFSVertexInfo vertex, 
+
+        private static void HandleAdjacentVertices<T>(SimpleGraph<T> graph,
+            BFSVertexInfo vertex,
             Queue<BFSVertexInfo> queue,
-            List<List<int>> cycles)
+            List<List<int>> cycles, 
+            Dictionary<int, BFSVertexInfo> visited)
         {
             for (int i = 0; i < graph.max_vertex; ++i)
             {
-                bool hasEdge = graph.IsEdge(vertex.vertexIndex, i);
+                bool hasEdge = graph.IsEdge(vertex.VertexIndex, i);
                 bool hasHit = graph.vertex[i].Hit;
                 
                 if (hasEdge && !hasHit)
                 {
                     graph.vertex[i].Hit = true;
-                    queue.Enqueue(new BFSVertexInfo {VertexIndex = i, Distance = vertex.Distance, Parent = vertex});
+                    BFSVertexInfo vertexInfo = new BFSVertexInfo { 
+                        VertexIndex = i,
+                        Distance = vertex.Distance + 1, 
+                        Parent = vertex 
+                    };
+                    visited.Add(i, vertexInfo);
+                    queue.Enqueue(vertexInfo);
                 }
 
-                if (hasEdge && hasHit && i != vertex.vertexIndex)
+                if (hasEdge && hasHit && i != vertex.Parent?.VertexIndex)
                 {
-                    List<int> cycle = CollectCycleVertices(graph, vertex, i, queue);
+                    List<int> cycle = CollectCycleVertices(vertex, visited[i]);
                     cycles.Add(cycle);
                 }
             }
         }
 
-        private static List<int> CollectCycleVertices<T>(SimpleGraph<T> graph, BFSVertexInfo leftVertex, BFSVertexInfo rightVertex, Queue<BFSVertexInfo> queue)
+        private static List<int> CollectCycleVertices(BFSVertexInfo leftVertex, BFSVertexInfo rightVertex)
         {
-            List<int> vertices = new List<int>();
+            List<int> leftVertices = new List<int>();
+            List<int> rightVertices = new List<int>();
 
-            BFSVertexInfo currentLeft, currentRight;
+            BFSVertexInfo currentLeft = leftVertex;
+            BFSVertexInfo currentRight = rightVertex;
 
-            for (currentLeft = leftVertex, currentRight = rightVertex, leftVertex = nextLeft, rightVertex = nextRight;
-                 currentLeft.VertexIndex != currentRight.VertexIndex;
-                 currentLeft = nextLeft, currentRight = nextRight)
+            while (currentLeft.VertexIndex != currentRight.VertexIndex)
             {
                 if (currentLeft.Distance < currentRight.Distance)
                 {
-                    nextRight = currentRight.Parent;
-                    vertices.Insert(vertices.Length - 1, currentRight.VertexIndex);
+                    rightVertices.Add(currentRight.VertexIndex);
+                    currentRight = currentRight.Parent;
                 }
                 else if (currentLeft.Distance > currentRight.Distance)
                 {
-                    nextLeft = currentLeft.Parent;
-                    vertices.Insert(0, currentLeft.VertexIndex);
+                    leftVertices.Add(currentLeft.VertexIndex);
+                    currentLeft = currentLeft.Parent;
                 }
                 else
                 {
-                    nextLeft = currentLeft.Parent;
-                    nextRight = currentRight.Parent;
-                    vertices.Insert(0, currentLeft.VertexIndex);
-                    vertices.Insert(vertices.Length - 1, currentRight.VertexIndex);
+                    leftVertices.Add(currentLeft.VertexIndex);
+                    rightVertices.Add(currentRight.VertexIndex);
+                    currentLeft = currentLeft.Parent;
+                    currentRight = currentRight.Parent;
                 }
             }
 
-            vertices.Insert(0, currentLeft.VertexIndex);
+            leftVertices.Add(currentLeft.VertexIndex);
+            rightVertices.Reverse();
+            leftVertices.AddRange(rightVertices);
+            leftVertices.Sort();
 
-            return vertices;
+            return leftVertices;
+        }
+        
+        private static void RemoveDuplicates(List<List<int>> cycles)
+        {
+            HashSet<string> hashSet = new HashSet<string>();
+            var uniqueCycles = new List<List<int>>();
+
+            foreach (var cycle in cycles)
+            {
+                string key = string.Join(",", cycle);
+                
+                if (!hashSet.Contains(key))
+                {
+                    hashSet.Add(key);
+                    uniqueCycles.Add(cycle);
+                }
+            }
+
+            cycles.Clear();
+            cycles.AddRange(uniqueCycles);
+        }
+        
+        internal class BFSVertexInfo
+        {
+            public int VertexIndex { get; set; }
+            public int Distance { get; set; }
+            public BFSVertexInfo Parent { get; set; }
         }
 
         #endregion
-    }
-    
-    internal class BFSVertexInfo
-    {
-        public int VertexIndex { get; set; }
-        public int Distance { get; set; }
-        public BFSVertexInfo Parent { get; set; }
     }
 }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AlgorithmsDataStructures2.Task11PathfindingWithBFS
+namespace AlgorithmsDataStructures2.Task11
 {
     public static class PathfindingWithBFS_2
     {

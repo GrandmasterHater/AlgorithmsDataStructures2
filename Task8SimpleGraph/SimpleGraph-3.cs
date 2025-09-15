@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace AlgorithmsDataStructures2.Task8SimpleGraph
+namespace AlgorithmsDataStructures2.Task8
 {
     [TestFixture]
     public class SimpleGraph_3

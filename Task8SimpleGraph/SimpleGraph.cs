@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace AlgorithmsDataStructures2
+namespace AlgorithmsDataStructures2.Task8
 {
     public class Vertex
     {

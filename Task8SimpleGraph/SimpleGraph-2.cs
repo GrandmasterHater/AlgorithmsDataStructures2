@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AlgorithmsDataStructures2.Task8SimpleGraph
+namespace AlgorithmsDataStructures2.Task8
 {
     public class DirectedGraph
     {

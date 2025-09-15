@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AlgorithmsDataStructures2.Task11;
 using NUnit.Framework;
 
-namespace AlgorithmsDataStructures2.Task11
+namespace AlgorithmsDataStructures2
 {
     [TestFixture]
-    public class PathfindingWithBFS_3
+    public class GraphsWithTriangles_3
     {
         #region AddVertex
         
@@ -263,157 +264,229 @@ namespace AlgorithmsDataStructures2.Task11
         }
 
         #endregion
-
-        #region FindMaxDistance
+        
+        #region WeakVertices
 
         [Test]
-        public void FindMaxDistance_EmptyGraph_ReturnsZero()
+        public void WeakVertices_WhenGraphIsEmpty_ReturnsEmptyList()
         {
-            var graph = new SimpleGraph<int>(0);
-            Assert.That(graph.FindMaxDistance(), Is.EqualTo(0));
+            var graph = new SimpleGraph<int>(3);
+
+            Assert.That(graph.WeakVertices(), Is.Empty);
         }
 
         [Test]
-        public void FindMaxDistance_SingleNodeGraph_ReturnsZero()
+        public void WeakVertices_WhenGraphHasNoTriangles_ReturnsAllVertices()
         {
-            var graph = new SimpleGraph<int>(1);
+            var graph = new SimpleGraph<int>(3);
             graph.AddVertex(1);
-            Assert.That(graph.FindMaxDistance(), Is.EqualTo(0));
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+
+            var result = graph.WeakVertices();
+
+            Assert.That(graph.WeakVertices().Select(v => v.Value), Is.EquivalentTo(new[] { 1, 2, 3 }));
         }
 
         [Test]
-        public void FindMaxDistance_GraphWith15Nodes_ReturnsCorrectDiameter()
+        public void WeakVertices_WhenGraphHasTriangleAndLooseVertices_ReturnsOnlyLooseVertices()
         {
-            var graph = new SimpleGraph<int>(15);
-            
-            for (int i = 0; i < 15; i++)
-                graph.AddVertex(i);
-            
-            //       0
-            //      / \
-            //     1   2
-            //    /|   |\
-            //   3 4   5 6
-            //  /|      \
-            // 7 8       9
-            //          / \
-            //         10 11
-            //         12
-            //         13
-            //         14
-            graph.AddEdge(0, 1);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(1, 3);
-            graph.AddEdge(1, 4);
-            graph.AddEdge(2, 5);
-            graph.AddEdge(2, 6);
-            graph.AddEdge(3, 7);
-            graph.AddEdge(3, 8);
-            graph.AddEdge(5, 9);
-            graph.AddEdge(9, 10);
-            graph.AddEdge(9, 11);
-            graph.AddEdge(10, 12);
-            graph.AddEdge(12, 13);
-            graph.AddEdge(13, 14);
+            var graph = new SimpleGraph<int>(5);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+            graph.AddVertex(4);
+            graph.AddVertex(5);
 
-            Assert.That(graph.FindMaxDistance(), Is.EqualTo(10));
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+
+            graph.AddEdge(3, 4);
+
+            var result = graph.WeakVertices();
+
+            Assert.That(result.Select(v => v.Value), Is.EquivalentTo(new[] { 4, 5 }));
         }
 
         #endregion
 
-        #region FindCycles
+        #region GetTrianglesCount
 
         [Test]
-        public void FindCycles_WhenGraphIsEmpty_ReturnsEmptyList()
-        {
-            var graph = new SimpleGraph<int>(0);
-
-            var cycles = graph.FindCycles();
-
-            Assert.That(cycles, Is.Empty);
-        }
-
-        [Test]
-        public void FindCycles_WhenGraphHasNoCycles_ReturnsEmptyList()
+        public void GetTrianglesCount_WhenGraphIsEmpty_ReturnsZero()
         {
             var graph = new SimpleGraph<int>(3);
 
-            for (int i = 0; i < 3; i++)
-                graph.AddVertex(i);
+            Assert.That(graph.GetTrianglesCount(), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void GetTrianglesCount_WhenGraphHasNoTriangles_ReturnsZero()
+        {
+            var graph = new SimpleGraph<int>(3);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
 
             graph.AddEdge(0, 1);
             graph.AddEdge(1, 2);
 
-            var cycles = graph.FindCycles();
-
-            Assert.That(cycles, Is.Empty);
+            Assert.That(graph.GetTrianglesCount(), Is.EqualTo(0));
         }
 
         [Test]
-        public void FindCycles_WhenGraphHasOneCycle_ReturnsOneCycle()
-        {
-            var graph = new SimpleGraph<int>(3);
-            for (int i = 0; i < 3; i++) 
-                graph.AddVertex(i);
-
-            graph.AddEdge(0, 1);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 0);
-            int expectedCyclesCount = 1;
-
-            var cycles = graph.FindCycles();
-
-            Assert.That(cycles.Count, Is.EqualTo(expectedCyclesCount));
-            Assert.That(cycles[0], Does.Contain(0).And.Contain(1).And.Contain(2));
-        }
-
-        [Test]
-        public void FindCycles_WhenGraphHasMultipleCycles_ReturnsAllCycles()
+        public void GetTrianglesCount_WhenGraphHasOneTriangleAndLoosePair_ReturnsOne()
         {
             var graph = new SimpleGraph<int>(5);
-            for (int i = 0; i < 5; i++) graph.AddVertex(i);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+            graph.AddVertex(4);
+            graph.AddVertex(5);
 
-            graph.AddEdge(0, 1);
-            graph.AddEdge(1, 2);
-            graph.AddEdge(2, 3);
-            graph.AddEdge(3, 0);
-            graph.AddEdge(0, 2);
-            graph.AddEdge(3, 4);
-            graph.AddEdge(2, 4);
-            int expectedCyclesCount = 6;
-
-            var cycles = graph.FindCycles();
-
-            Assert.That(cycles.Count, Is.EqualTo(expectedCyclesCount));
-            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(0) && c.Contains(1) && c.Contains(2)));
-            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(0) && c.Contains(2) && c.Contains(3)));
-        }
-        
-        [Test]
-        public void FindCycles_WhenGraphHasTwoDisconnectedTriangles_ReturnsTwoCycles()
-        {
-            var graph = new SimpleGraph<int>(6);
-            for (int i = 0; i < 6; i++) graph.AddVertex(i);
-
-            // Первый треугольник 0-1-2-0
             graph.AddEdge(0, 1);
             graph.AddEdge(1, 2);
             graph.AddEdge(2, 0);
 
-            // Второй треугольник 3-4-5-3
+            graph.AddEdge(3, 4);
+
+            Assert.That(graph.GetTrianglesCount(), Is.EqualTo(1));
+        }
+
+        [TestCaseSource(nameof(MultipleTrianglesCases))]
+        public int GetTrianglesCount_WhenGraphHasDifferentTrianglesCases_ReturnsExpected(SimpleGraph<int> graph)
+        {
+            return graph.GetTrianglesCount();
+        }
+        
+        public static IEnumerable<TestCaseData> MultipleTrianglesCases()
+        {
+            yield return new TestCaseData(
+                    BuildGraphWithTrianglesCase1()
+                ).SetName("GetTrianglesCount_WhenGraphHasOneTriangle_ReturnsOne")
+                .Returns(1);
+
+            yield return new TestCaseData(
+                    BuildGraphWithTrianglesCase2()
+                ).SetName("GetTrianglesCount_WhenGraphHasTwoDisjointTriangles_ReturnsTwo")
+                .Returns(2);
+
+            yield return new TestCaseData(
+                    BuildGraphWithTrianglesCase3()
+                ).SetName("GetTrianglesCount_WhenGraphHasTwoTrianglesWithCommonEdge_ReturnsTwo")
+                .Returns(2);
+        }
+
+        private static SimpleGraph<int> BuildGraphWithTrianglesCase1()
+        {
+            var graph = new SimpleGraph<int>(3);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+
+            return graph;
+        }
+
+        private static SimpleGraph<int> BuildGraphWithTrianglesCase2()
+        {
+            var graph = new SimpleGraph<int>(6);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+            graph.AddVertex(4);
+            graph.AddVertex(5);
+            graph.AddVertex(6);
+
+            // Первый треугольник: 1-2-3
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+
+            // Второй треугольник: 4-5-6
             graph.AddEdge(3, 4);
             graph.AddEdge(4, 5);
             graph.AddEdge(5, 3);
-            int expectedCyclesCount = 2;
 
-            var cycles = graph.FindCycles();
+            return graph;
+        }
 
-            Assert.That(cycles.Count, Is.EqualTo(expectedCyclesCount));
-            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(0) && c.Contains(1) && c.Contains(2)));
-            Assert.That(cycles, Has.Some.Matches<List<int>>(c => c.Contains(3) && c.Contains(4) && c.Contains(5)));
+        private static SimpleGraph<int> BuildGraphWithTrianglesCase3()
+        {
+            var graph = new SimpleGraph<int>(4);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+            graph.AddVertex(4);
+
+            // Первый треугольник: 1-2-3
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+
+            // Второй треугольник: 2-3-4 (общая грань 2-3)
+            graph.AddEdge(1, 3);
+            graph.AddEdge(2, 3);
+
+            return graph;
+        }
+
+        #endregion
+        
+        #region WeakVerticesByInterface
+
+        [Test]
+        public void WeakVerticesByInterface_WhenGraphIsEmpty_ReturnsEmptyList()
+        {
+            var graph = new SimpleGraph<int>(3);
+
+            Assert.That(graph.WeakVerticesByInterface(), Is.Empty);
+        }
+
+        [Test]
+        public void WeakVerticesByInterface_WhenGraphHasNoTriangles_ReturnsAllVertices()
+        {
+            var graph = new SimpleGraph<int>(3);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+
+            var result = graph.WeakVerticesByInterface();
+
+            Assert.That(graph.WeakVertices().Select(v => v.Value), Is.EquivalentTo(new[] { 1, 2, 3 }));
+        }
+
+        [Test]
+        public void WeakVerticesByInterface_WhenGraphHasTriangleAndLooseVertices_ReturnsOnlyLooseVertices()
+        {
+            var graph = new SimpleGraph<int>(5);
+            graph.AddVertex(1);
+            graph.AddVertex(2);
+            graph.AddVertex(3);
+            graph.AddVertex(4);
+            graph.AddVertex(5);
+
+            graph.AddEdge(0, 1);
+            graph.AddEdge(1, 2);
+            graph.AddEdge(2, 0);
+
+            graph.AddEdge(3, 4);
+
+            var result = graph.WeakVerticesByInterface();
+
+            Assert.That(result.Select(v => v.Value), Is.EquivalentTo(new[] { 4, 5 }));
         }
 
         #endregion
     }
 }
-
